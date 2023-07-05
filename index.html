@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Object Search</title>
+    <style>
+        /* Add some basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 10px;
+            width: 300px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Object Search</h1>
+
+    <div class="search-container">
+        <input id="search-input" class="search-input" type="text" placeholder="Enter an object">
+        <button id="search-button" class="search-button">Search</button>
+    </div>
+
+    <div id="result-container"></div>
+
+    <script>
+        function add_object(object_from_usr, bin_) {
+            var bin_mapping = {
+                'recycling': 'recycling.txt',
+                'recycling bin': 'recycling.txt',
+                'garbage': 'garbage.txt',
+                'garbage bin': 'garbage.txt',
+                'black bin': 'garbage.txt',
+                'black': 'garbage.txt',
+                'green': 'green_bin.txt',
+                'green bin': 'green_bin.txt',
+            };
+
+            if (bin_ in bin_mapping) {
+                var file_name = bin_mapping[bin_];
+                var formData = new FormData();
+                formData.append("object", object_from_usr);
+
+                fetch('bins/' + file_name, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        alert("Object added to bin successfully.");
+                    } else {
+                        alert("Failed to add object to bin.");
+                    }
+                })
+                .catch(function(error) {
+                    console.error("Error adding object:", error);
+                });
+            } else {
+                alert("Invalid bin specified.");
+            }
+        }
+
+        function search_bin(searched_object) {
+            var split_object = searched_object.split(" ");
+
+            if (split_object.includes("container")) {
+                return "Recycling";
+            }
+
+            var recycling_search = new XMLHttpRequest();
+            recycling_search.open("GET", 'bins/recycling.txt', false);
+            recycling_search.send();
+
+            if (recycling_search.responseText.toLowerCase().split('\n').includes(searched_object.toLowerCase())) {
+                return "Recycling";
+            }
+
+            var garbage_search = new XMLHttpRequest();
+            garbage_search.open("GET", 'bins/garbage.txt', false);
+            garbage_search.send();
+
+            if (garbage_search.responseText.toLowerCase().split('\n').includes(searched_object.toLowerCase())) {
+                return "Garbage";
+            }
+
+            var green_bin_search = new XMLHttpRequest();
+            green_bin_search.open("GET", 'bins/green_bin.txt', false);
+            green_bin_search.send();
+
+            if (green_bin_search.responseText.toLowerCase().split('\n').includes(searched_object.toLowerCase())) {
+                return "Green Bin";
+            }
+
+            // ------now plural
+
+            recycling_search.open("GET", 'bins/recycling.txt', false);
+            recycling_search.send();
+
+            if (recycling_search.responseText.toLowerCase().split('\n').includes(searched_object.toLowerCase() + "s")) {
+                return "Recycling";
+            }
+
+            garbage_search.open("GET", 'bins/garbage.txt', false);
+            garbage_search.send();
+
+            if (garbage_search.responseText.toLowerCase().split('\n').includes(searched_object.toLowerCase() + "s")) {
+                return "Garbage";
+            }
+
+            green_bin_search.open("GET", 'bins/green_bin.txt', false);
+            green_bin_search.send();
+
+            if (green_bin_search.responseText.toLowerCase().split('\n').includes(searched_object.toLowerCase() + "s")) {
+                return "Green Bin";
+            }
+
+            return "Not in the list.";
+        }
+
+        function displayResult(result) {
+            var resultContainer = document.getElementById("result-container");
+            resultContainer.innerHTML = "<p>" + result + "</p>";
+        }
+
+        function handleSearch() {
+            var searchInput = document.getElementById("search-input");
+            var searchTerm = searchInput.value;
+
+            var found = search_bin(searchTerm);
+            displayResult(found);
+
+            if (found === "Not in the list.") {
+                var addNewObject = confirm("That object is not in the list. Would you like to add it?");
+
+                if (addNewObject) {
+                    var whichBin = prompt("Which bin does it go in?");
+                    add_object(searchTerm, whichBin);
+                }
+            }
+        }
+
+        var searchButton = document.getElementById("search-button");
+        searchButton.addEventListener("click", handleSearch);
+    </script>
+</body>
+</html>
