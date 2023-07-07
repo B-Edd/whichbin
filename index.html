@@ -3,24 +3,36 @@
 <head>
   <title>Bin Finder</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="autocomplete.css">
+  <script src="script.js"></script>
 </head>
 <body>
-  <h1>Bin Finder</h1>
-  <input type="text" id="searchBox" placeholder="Enter an item">
-  <button onclick="searchBin()">Search</button>
-  <p id="result"></p>
+  <div class="container">
+    <h1>Bin Finder</h1>
 
-  <h2>Add New Item</h2>
-  <input type="text" id="addItemBox" placeholder="Enter a new item">
-  <button onclick="addItem()">Add</button>
+    <div class="search-container">
+      <input type="text" id="searchBox" list="itemList" placeholder="Search for an item...">
+      <datalist id="itemList"></datalist>
+      <button onclick="searchBin()">Search</button>
+    </div>
 
-  <h2>Delete Item</h2>
-  <input type="text" id="deleteItemBox" placeholder="Enter an item to delete">
-  <button onclick="deleteItem()">Delete</button>
+    <p id="result"></p>
 
-  <h2>Dictionary</h2>
-  <div id="dictionary"></div>
+    <h2>Add New Item</h2>
+    <div class="add-item-container">
+      <input type="text" id="addItemBox" placeholder="Enter a new item" maxlength="20">
+      <button onclick="addItem()">Add</button>
+    </div>
 
-  <script src="script.js"></script>
+    <h2>Delete Item</h2>
+    <div class="delete-item-container">
+      <input type="text" id="deleteItemBox" placeholder="Enter an item to delete">
+      <button onclick="deleteItem()">Delete</button>
+    </div>
+
+    <h2>Dictionary</h2>
+    <div id="dictionary"></div>
+  </div>
+
 </body>
 </html>
